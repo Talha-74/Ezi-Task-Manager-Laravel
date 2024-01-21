@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class TaskController extends Controller
 {
@@ -11,7 +13,8 @@ class TaskController extends Controller
      */
     public function index()
     {
-        return view('tasks.index');
+        $tasks = Task::all();
+        return view('tasks.index', ['tasks' => $tasks]);
     }
 
     /**
@@ -27,7 +30,18 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string|max:255',
+        ]);
+
+
+        $task = [
+            'title' => $request->title,
+            'description' => $request->description,
+        ];
+        Task::create($task);
+        return redirect()->route('task.index')->with('success', 'Task created successfully.');
     }
 
     /**
@@ -49,16 +63,31 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        $task_id = $request->input('task_id');
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string|max:255',
+        ]);
+
+        $task = Task::find($task_id);
+        $task->title = $request->title;
+        $task->description = $request->description;
+        $task->update();
+
+        return redirect()->route('task.index')->with('success', 'Task updated successfully.');
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+
+        $destroy = Task::find($id);
+        $destroy->delete();
+        return redirect()->route('task.index')->with('success', 'Task deleted successfully.');
     }
 }

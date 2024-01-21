@@ -29,6 +29,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('task/index', [TaskController::class, 'index'])->name('task.index');
+Route::get('/task/index', [TaskController::class, 'index'])->name('task.index');
+Route::post('/task/store', [TaskController::class, 'store'])->name('task.store');
+Route::post('/task/update', [TaskController::class, 'update'])->name('task.update');
+Route::delete('/task/delete/{id}', [TaskController::class, 'destroy'])->name('task.destroy');
 
 require __DIR__.'/auth.php';
