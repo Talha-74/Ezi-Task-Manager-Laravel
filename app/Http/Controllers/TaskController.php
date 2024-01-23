@@ -35,7 +35,6 @@ class TaskController extends Controller
             'description' => 'required|string|max:255',
         ]);
 
-
         $task = [
             'title' => $request->title,
             'description' => $request->description,
@@ -69,11 +68,13 @@ class TaskController extends Controller
         $request->validate([
             'title' => 'required|string',
             'description' => 'required|string|max:255',
+            'status' => 'required|in:To Do,In Progress,Completed',
         ]);
 
         $task = Task::find($task_id);
         $task->title = $request->title;
         $task->description = $request->description;
+        $task->status = $request->status; // Update the status
         $task->update();
 
         return redirect()->route('task.index')->with('success', 'Task updated successfully.');
@@ -85,7 +86,6 @@ class TaskController extends Controller
      */
     public function destroy($id)
     {
-
         $destroy = Task::find($id);
         $destroy->delete();
         return redirect()->route('task.index')->with('success', 'Task deleted successfully.');
