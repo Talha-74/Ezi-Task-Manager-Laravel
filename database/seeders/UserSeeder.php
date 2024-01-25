@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
         // Create admin
         $admin = User::create([
             'name' => 'Admin',
-            'email' => 'admin1@gmail.com',
+            'email' => 'talhashinwari7474@gmail.com',
             'password' => bcrypt('password'),
             'role_id' => '1'
         ]);
@@ -30,7 +30,7 @@ class UserSeeder extends Seeder
             'role_id' => '2'
         ]);
         $manager->roles()->attach(Role::where('name', 'Manager')->first());
-        // Create admin
+        // Create User
         $user = User::create([
             'name' => 'User',
             'email' => 'user1@gmail.com',

@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="container" style="width: 60%">
-        <div class="container mt-2 mb-2 text-center">
+        <div class="container mt-4 mb-2 text-center">
             <h1 style="font-size: 30px;">Ezi Task Manager</h1>
         </div>
 
@@ -18,6 +18,25 @@
                 onclick="this.parentElement.style.display='none'">x</button>
         </div>
         @endif
+
+        {{-- Tabs --}}
+        <ul class="nav nav-tabs mb-2 mt-2">
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#"><i class="bi bi-list-task"></i> ALL</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="bi bi-alarm"></i> To Do</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="bi bi-square"></i> in Progress</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="bi bi-check2-square"></i> Completed</a>
+            </li>
+            {{-- <li class="nav-item">
+                <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+            </li> --}}
+        </ul>
 
         @if(auth()->user()->roles->where('name', 'Admin')->isNotEmpty())
         <div class="d-flex justify-content-end mb-2">
