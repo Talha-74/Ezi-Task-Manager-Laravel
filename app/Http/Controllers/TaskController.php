@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Models\User;
+use App\Notifications\TaskUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 
 class TaskController extends Controller
@@ -82,6 +85,12 @@ class TaskController extends Controller
             $task->description = $request->description;
             $task->status = $request->status; // Update the status
             $task->update();
+
+                $admin = User::whereHas('roles', function ($query) {
+                $query->where('name', 'Admin');
+                })->get();
+
+                Notification::send($admin, new TaskUpdated());                                                                                                                                                                                                                                                                                                                 
 
             return redirect()->route('task.index')->with('success', 'Task updated successfully.');
          
