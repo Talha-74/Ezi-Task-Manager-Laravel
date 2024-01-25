@@ -16,16 +16,16 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <!-- Role Dropdown -->
-        <div class="mt-4">
-            <x-input-label for="role" :value="__('Role')" />
-            <select id="role" name="role" class="block mt-1 w-full" required>
-                @foreach($roles as $role)
-                <option value="{{ $role->id }}">{{ $role->name }}</option>
-                @endforeach
-            </select>
-            <x-input-error :messages="$errors->get('role')" class="mt-2" />
-        </div>
+    <!-- Role Dropdown -->
+    {{-- <div class="mt-4">
+        <x-input-label for="role" :value="__('Role')" />
+        <select id="role" name="roles[]" class="block mt-1 w-full" required>
+            @foreach($roles as $role)
+            <option value="{{ $role->id }}">{{ $role->name }}</option>
+            @endforeach
+        </select>
+        <x-input-error :messages="$errors->get('roles')" class="mt-2" />
+    </div> --}}
 
         <!-- Password -->
         <div class="mt-4">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class TaskController extends Controller
@@ -16,6 +17,7 @@ class TaskController extends Controller
         $tasks = Task::all();
         return view('tasks.index', ['tasks' => $tasks]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -30,6 +32,7 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->validate([
             'title' => 'required|string',
             'description' => 'required|string|max:255',
@@ -41,6 +44,7 @@ class TaskController extends Controller
         ];
         Task::create($task);
         return redirect()->route('task.index')->with('success', 'Task created successfully.');
+
     }
 
     /**
@@ -64,23 +68,25 @@ class TaskController extends Controller
      */
     public function update(Request $request)
     {
-        $task_id = $request->input('task_id');
-        $request->validate([
-            'title' => 'required|string',
-            'description' => 'required|string|max:255',
-            'status' => 'required|in:To Do,In Progress,Completed',
-        ]);
+        // dd('Before gate check');
+         
+            $task_id = $request->input('task_id');
+            $request->validate([
+                'title' => 'required|string',
+                'description' => 'required|string|max:255',
+                'status' => 'required|in:To Do,In Progress,Completed',
+            ]);
 
-        $task = Task::find($task_id);
-        $task->title = $request->title;
-        $task->description = $request->description;
-        $task->status = $request->status; // Update the status
-        $task->update();
+            $task = Task::find($task_id);
+            $task->title = $request->title;
+            $task->description = $request->description;
+            $task->status = $request->status; // Update the status
+            $task->update();
 
-        return redirect()->route('task.index')->with('success', 'Task updated successfully.');
+            return redirect()->route('task.index')->with('success', 'Task updated successfully.');
+         
+    
     }
-
-
     /**
      * Remove the specified resource from storage.
      */

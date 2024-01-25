@@ -42,10 +42,12 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            // 'role_id' => $request->role,
         ]);
 
         // Assign roles to user
-        $user->roles()->sync($request->roles);
+        // $user->roles()->sync($request->roles);
+
 
         event(new Registered($user));
 

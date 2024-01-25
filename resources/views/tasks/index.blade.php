@@ -19,10 +19,13 @@
         </div>
         @endif
 
+        @if(auth()->user()->roles->where('name', 'Admin')->isNotEmpty())
         <div class="d-flex justify-content-end mb-2">
-            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addTask"><i
-                    class="bi bi-plus mr-1"></i> Add task </button>
+            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addTask">
+                <i class="bi bi-plus mr-1"></i> Add task
+            </button>
         </div>
+        @endif
 
         <div class="d-flex align-items-center justify-content-center">
             <table class="table table-hover table-bordered" id="myTable">
@@ -32,12 +35,14 @@
                         <th scope="col">Title</th>
                         <th scope="col">Description</th>
                         <th scope="col">Status</th>
+                        @if(auth()->user()->roles->where('name', 'User')->isEmpty())
                         <th scope="col">Actions</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
                     <?php $i = 1; ?>
-                    @forelse ($tasks as $task)
+                    @foreach ($tasks as $task)
                     <tr>
                         <td>
                             {{ $i++ }}
@@ -45,6 +50,7 @@
                         <td>{{$task->title }}</td>
                         <td>{{ $task->description }}</td>
                         <td><span class="badge-pill badge-primary">{{ $task->status }}</span></td>
+                        @if(auth()->user()->roles->where('name', 'User')->isEmpty())
                         <td>
                             <form method="POST" action="{{ route('task.destroy', ['id' => $task->id]) }}"
                                 style="display: inline">
@@ -61,10 +67,9 @@
                                 <i class="bi bi-pencil-square"></i>
                             </button>
                         </td>
+                        @endif
                     </tr>
-                    @empty
-                    <p>No tasks found</p>
-                    @endforelse
+                    @endforeach
                 </tbody>
             </table>
         </div>
