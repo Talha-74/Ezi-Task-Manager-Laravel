@@ -14,8 +14,16 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-    Role::create(['name' => 'Admin'])->permissions()->sync(Permission::all());
-    Role::create(['name' => 'Manager'])->permissions()->sync(Permission::where('name', 'Edit tasks')->get());
-    Role::create(['name' => 'User'])->permissions()->sync(Permission::where('name', 'View tasks')->get());
+        // Create Admin role and attach all permissions
+        $adminRole = Role::create(['name' => 'Admin']);
+        $adminRole->permissions()->attach(Permission::pluck('id'));
+
+        // Create Manager role and attach specific permissions
+        $managerRole = Role::create(['name' => 'Manager']);
+        $managerRole->permissions()->attach(Permission::whereIn('name', ['View tasks', 'Edit tasks', 'Delete tasks'])->pluck('id'));
+
+        // Create User role and attach specific permissions
+        $userRole = Role::create(['name' => 'User']);
+        $userRole->permissions()->attach(Permission::where('name', 'View tasks')->pluck('id'));
     }
 }

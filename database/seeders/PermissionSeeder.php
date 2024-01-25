@@ -14,6 +14,8 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         Permission::create(['name' => 'View tasks']);
+        Permission::create(['name' => 'Add tasks']);
         Permission::create(['name' => 'Edit tasks']);
+        Permission::create(['name' => 'Delete tasks']);
     }
 }
