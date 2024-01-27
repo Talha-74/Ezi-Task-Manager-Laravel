@@ -19,177 +19,107 @@
         </div>
         @endif
 
-        {{-- Tabs --}}
-        <ul class="nav nav-tabs mb-2 mt-2">
-            <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#"><i class="bi bi-list-task"></i> ALL</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="bi bi-alarm"></i> To Do</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="bi bi-square"></i> in Progress</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="bi bi-check2-square"></i> Completed</a>
-            </li>
-            {{-- <li class="nav-item">
-                <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-            </li> --}}
-        </ul>
-
         @if(auth()->user()->roles->where('name', 'Admin')->isNotEmpty())
-        <div class="d-flex justify-content-end mb-2">
+        <div class="d-flex justify-content-end mb-2 mt-3">
             <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addTask">
                 <i class="bi bi-plus mr-1"></i> Add task
             </button>
         </div>
         @endif
 
-        <div class="d-flex align-items-center justify-content-center">
-            <table class="table table-hover table-bordered" id="myTable">
-                <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Status</th>
-                        @if(auth()->user()->roles->where('name', 'User')->isEmpty())
-                        <th scope="col">Actions</th>
-                        @endif
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php $i = 1; ?>
-                    @foreach ($tasks as $task)
-                    <tr>
-                        <td>
-                            {{ $i++ }}
-                        </td>
-                        <td>{{$task->title }}</td>
-                        <td>{{ $task->description }}</td>
-                        <td><span class="badge-pill badge-primary">{{ $task->status }}</span></td>
-                        @if(auth()->user()->roles->where('name', 'User')->isEmpty())
-                        <td>
-                            <form method="POST" action="{{ route('task.destroy', ['id' => $task->id]) }}"
-                                style="display: inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn"
-                                    onclick="return confirm('Are You Sure to Delete Task?'); ">
-                                    <i class="bi bi-trash3-fill"></i>
-                                </button>
-                            </form>
-                            <button data-bs-toggle="modal" data-bs-target="#editTask" class="update_task"
-                                data-id="{{ $task->id }}" data-title="{{ $task->title }}"
-                                data-description="{{ $task->description }}" data-status="{{ $task->status }}">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
-                        </td>
-                        @endif
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
 
-    {{-- Add Task Modal --}}
-    <div class="modal fade" id="addTask" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title">Add Task</h2>
-                    <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+<!-- Tabs -->
+<ul class="nav nav-tabs mb-2 mt-2" id="myTabs">
+    <li class="nav-item">
+        <a class="nav-link {{ request()->query('status', 'All') === 'All' ? 'active' : '' }}" id="all-tab"
+            href="{{ route('task.tabs', ['status' => 'All']) }}">
+            <i class="bi bi-list-task"></i> ALL
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ request()->query('status') === 'To Do' ? 'active' : '' }}" id="todo-tab"
+            href="{{ route('task.tabs', ['status' => 'To Do']) }}">
+            <i class="bi bi-alarm"></i> To Do
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ request()->query('status') === 'In Progress' ? 'active' : '' }}" id="inprogress-tab"
+            href="{{ route('task.tabs', ['status' => 'In Progress']) }}">
+            <i class="bi bi-square"></i> In Progress
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ request()->query('status') === 'Completed' ? 'active' : '' }}" id="completed-tab"
+            href="{{ route('task.tabs', ['status' => 'Completed']) }}">
+            <i class="bi bi-check2-square"></i> Completed
+        </a>
+    </li>
+</ul>
 
-                <div class="modal-body">
-                    <form action="{{ route('task.store') }}" method="POST">
-                        @csrf
-                        <div class="form-group mb-3" style="position: relative;">
-                            <label class="control-label mb-2" for="title">Title <code>*</code></label>
-                            <input type="text" class="form-control rounded-2" name="title" id="title"
-                                placeholder="task title" required>
-                            {{-- <i class="bi bi-list-check"
-                                style="position: absolute; top:37px; right:10px; font-size:24px;"></i> --}}
-                        </div>
-                        <div class="form-group mt-2">
-                            <label class="control-label mb-2" for="description">Description <code>*</code></label>
-                            <textarea type="text" class="form-control rounded-2" name="description" id="description"
-                                placeholder="Task Description" required></textarea>
-                        </div>
-                </div>
-                <div class="modal-footer">
-                    <input type="reset" class="btn btn-warning">
-                    <button class="btn btn-primary">Save changes</button>
-                </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-   <!-- Edit Task Modal -->
-<div class="modal fade" id="editTask" tabindex="-1" aria-labelledby="editTask" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Edit Task</h2>
-                <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <div class="modal-body">
-                <form action="{{ route('task.update') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="task_id" id="id">
-                    <div class="form-group mb-3" style="position: relative;">
-                        <label class="control-label mb-2" for="title">Title<code>*</code></label>
-                        <input type="text" class="form-control rounded-2" name="title" id="taskTitle"
-                            placeholder="task title" required>
-                    </div>
-                    <div class="form-group mt-2">
-                        <label class="control-label mb-1" for="description">Description<code>*</code></label>
-                        <textarea type="text" class="form-control rounded-2" name="description" id="description_id"
-                            placeholder="Task Description" required></textarea>
-                    </div>
-                    <br>
-                    <div class="form-group">
-                        <label class="control-label mb-2" for="status">Update Status<code>*</code></label><br>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="status" id="inlineRadio1" value="To Do" required>
-                            <label class="form-check-label" for="inlineRadio1">To Do</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="status" id="inlineRadio2"
-                                value="In Progress" required>
-                            <label class="form-check-label" for="inlineRadio2">In Progress</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="status" id="inlineRadio3"
-                                value="Completed" required>
-                            <label class="form-check-label" for="inlineRadio3">Completed</label>
-                        </div>
-                    </div>
-            </div>
-            <div class="modal-footer">
-                <input type="reset" class="btn btn-warning">
-                <button class="btn btn-success">Save changes</button>
-            </div>
-            </form>
-        </div>
-    </div>
+<!-- Task List -->
+<div class="d-flex align-items-center justify-content-center">
+    <table class="table table-hover table-bordered" id="myTable">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Title</th>
+                <th scope="col">Description</th>
+                <th scope="col">Status</th>
+                @if(auth()->user()->roles->where('name', 'User')->isEmpty())
+                <th scope="col">Actions</th>
+                @endif
+            </tr>
+        </thead>
+        <tbody>
+            @if(request()->query('status', 'All') === 'All')
+            @include('tasks.partials.task_list', ['tasks' => $tasks])
+            @elseif(request()->query('status') === 'To Do')
+            @include('tasks.partials.todo_list', ['todoTasks' => $todoTasks])
+            @elseif(request()->query('status') === 'In Progress')
+            @include('tasks.partials.inprogress_list', ['inProgressTasks' => $inProgressTasks])
+            @elseif(request()->query('status') === 'Completed')
+            @include('tasks.partials.completed_list', ['completedTasks' => $completedTasks])
+            @endif
+        </tbody>
+    </table>
 </div>
-</div>
-    <script>
-        $(document).on("click", ".update_task", function () {
-            var taskId = $(this).data("id");
-            var taskTitle = $(this).data("title");
-            var taskDescription = $(this).data("description");
-            var taskStatus = $(this).data("status");
 
-            $("#id").val(taskId);
-            $("#taskTitle").val(taskTitle);
-            $("#description_id").val(taskDescription);
-            $("input[name='status'][value='" + taskStatus + "']").prop("checked", true);
+    </div>
+
+
+    @include('tasks.create')
+    @include('tasks.edit')
+    {{-- @include('tasks.partials.task_list') --}}
+<!-- Add this script block at the end of your Blade file, after including jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#myTabs a').on('click', function (e) {
+            e.preventDefault();
+
+            const tabId = $(this).attr('id').replace('-tab', '');
+            const url = $(this).attr('href');
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (data) {
+                    // Log to the console to check if the AJAX request is successful
+                    console.log('Success:', data);
+
+                    // Uncomment the following lines if you want to replace content in the current tab
+                    $('#myTabContent .tab-pane').removeClass('show active');
+                    $(`#${tabId}`).addClass('show active');
+                    
+                    // Replace content of the current tab
+                    $(`#${tabId}`).html(data);
+                },
+                error: function (xhr, status, error) {
+                    // Log to the console to check if there is any error
+                    console.log('Error:', status, error);
+                }
             });
-    </script>
+        });
+    });
+</script>
 </x-app-layout>

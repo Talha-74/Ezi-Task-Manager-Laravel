@@ -33,5 +33,6 @@ Route::get('/task/index', [TaskController::class, 'index'])->name('task.index');
 Route::post('/task/store', [TaskController::class, 'store'])->name('task.store');
 Route::post('/task/update', [TaskController::class, 'update'])->name('task.update');
 Route::delete('/task/delete/{id}', [TaskController::class, 'destroy'])->name('task.destroy');
-
+// task tabs route
+Route::get('/tasks/tabs/{status?}', [TaskController::class, 'tabs'])->name('task.tabs');
 require __DIR__.'/auth.php';
