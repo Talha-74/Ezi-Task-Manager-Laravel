@@ -15,12 +15,43 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+ public function index()
     {
-        $tasks = Task::all();
-        return view('tasks.index', ['tasks' => $tasks]);
+        $data['tasks'] = Task::all();
+        $data['todoTasks'] = Task::where('status', 'To Do')->get();
+        $data['inProgressTasks'] = Task::where('status', 'In Progress')->get();
+        $data['completedTasks'] = Task::where('status', 'Completed')->get();
+        return view('tasks.index')->with($data);
     }
 
+ public function tabs($status = 'All')
+{
+    // Fetch tasks based on status
+    switch ($status) {
+        case 'To Do':
+            $tasks = Task::where('status', 'To Do')->get();
+            break;
+        case 'In Progress':
+            $tasks = Task::where('status', 'In Progress')->get();
+            break;
+        case 'Completed':
+            $tasks = Task::where('status', 'Completed')->get();
+            break;
+        default:
+            $tasks = Task::all();
+    }
+
+    // Other logic...
+
+    return view('tasks.index', compact('tasks'));
+}
+
+
+
+    // public function tasksTabs($status) {
+    //     $tasks = Task::where('status', $status)->get();
+    //     return view('tasks.partials.task_list', ['tasks' => $tasks]);
+    // }
 
     /**
      * Show the form for creating a new resource.
